@@ -1,0 +1,34 @@
+htmlDocument: {
+	tagElement: {
+		tagName: html,
+		htmlTagContent: {
+			tagElement: {
+				tagName: head,
+				htmlTagContent: {},
+			},
+			tagElement: {
+				tagName: body,
+				htmlTagContent: {
+					tagElement: {
+						tagName: p,
+						normalAttribute: {
+							attributeName: class,
+							value: "classname",
+						},
+						htmlTagContent: {
+							text: {
+								textValue: 
+							    Test Test ,
+							},
+							mustach: {
+								Exp(string): {
+									stringValue: 'heyo',
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+}
