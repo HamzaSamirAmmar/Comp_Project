@@ -1,10 +1,11 @@
-package ast.nodes.expressions.literal;
+package ast.nodes.expressions.literals;
 
 import ast.nodes.expressions.Expression;
 import ast.nodes.expressions.Iterable;
+import ast.nodes.expressions.Valuable;
 import ast.nodes.util.Formatter;
 
-public class StringNode extends Expression implements Iterable {
+public class StringNode extends Expression implements Iterable, Valuable {
     String stringValue;
 
     public StringNode(String stringValue) {

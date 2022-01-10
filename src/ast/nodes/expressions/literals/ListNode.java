@@ -1,26 +1,24 @@
-package ast.nodes.expressions.literal;
+package ast.nodes.expressions.literals;
 
 import ast.nodes.expressions.Expression;
 import ast.nodes.expressions.Iterable;
-import ast.nodes.expressions.Valuable;
 import ast.nodes.expressions.ValuableNode;
-import ast.nodes.htmlNodes.Mustache;
 import ast.nodes.util.Formatter;
 
 import java.util.ArrayList;
 
 public class ListNode extends Expression implements Iterable {
-    ArrayList<ValuableNode> elements;
+    ArrayList<Expression> elements;
 
-    public ListNode(ArrayList<ValuableNode> elements) {
+    public ListNode(ArrayList<Expression> elements) {
         this.elements = elements;
     }
 
-    public ArrayList<ValuableNode> getElements() {
+    public ArrayList<Expression> getElements() {
         return elements;
     }
 
-    public void setElements(ArrayList<ValuableNode> elements) {
+    public void setElements(ArrayList<Expression> elements) {
         this.elements = elements;
     }
 

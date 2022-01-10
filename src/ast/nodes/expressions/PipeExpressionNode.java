@@ -1,22 +1,22 @@
 package ast.nodes.expressions;
 
-import ast.nodes.expressions.literal.FunctionCallNode;
+import ast.nodes.expressions.literals.FunctionCallNode;
 import ast.nodes.util.Formatter;
 
 public class PipeExpressionNode extends Expression implements Iterable,Logical,Concatable{
-    ValuableNode firstOperand;
+    Expression firstOperand;//should be valuable? maybe not ,any expression should work
     FunctionCallNode functionCall;
 
-    public PipeExpressionNode(ValuableNode firstOperand, FunctionCallNode functionCall) {
+    public PipeExpressionNode(Expression firstOperand, FunctionCallNode functionCall) {
         this.firstOperand = firstOperand;
         this.functionCall = functionCall;
     }
 
-    public ValuableNode getFirstOperand() {
+    public Expression getFirstOperand() {
         return firstOperand;
     }
 
-    public void setFirstOperand(ValuableNode firstOperand) {
+    public void setFirstOperand(Expression firstOperand) {
         this.firstOperand = firstOperand;
     }
 

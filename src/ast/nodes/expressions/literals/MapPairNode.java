@@ -1,15 +1,17 @@
-package ast.nodes.expressions.literal;
+package ast.nodes.expressions.literals;
 
 import ast.nodes.expressions.Expression;
-import ast.nodes.expressions.Valuable;
 import ast.nodes.expressions.ValuableNode;
 import ast.nodes.util.Formatter;
 
-public class MapPair extends Expression {
+public class MapPairNode extends Expression {
     String key;
-    ValuableNode value;
+    Expression value;
 
-    public MapPair(String key, ValuableNode value) {
+    public MapPairNode() {
+    }
+
+    public MapPairNode(String key, Expression value) {
         this.key = key;
         this.value = value;
     }
@@ -22,11 +24,11 @@ public class MapPair extends Expression {
         this.key = key;
     }
 
-    public ValuableNode getValue() {
+    public Expression getValue() {
         return value;
     }
 
-    public void setValue(ValuableNode value) {
+    public void setValue(Expression value) {
         this.value = value;
     }
 

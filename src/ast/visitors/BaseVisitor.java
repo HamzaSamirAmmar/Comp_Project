@@ -4,7 +4,7 @@ import ast.nodes.AbstractNode;
 import ast.nodes.attributes.HTMLAttribute;
 import ast.nodes.attributes.normalAttribute;
 import ast.nodes.expressions.Expression;
-import ast.nodes.expressions.literal.StringNode;
+import ast.nodes.expressions.literals.*;
 import ast.nodes.htmlNodes.*;
 import generated.HTMLParser;
 import generated.HTMLParserBaseVisitor;
@@ -137,8 +137,8 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     }
 
     @Override
-    public AbstractNode visitLiteralBooleanExpression(HTMLParser.LiteralBooleanExpressionContext ctx) {
-        return super.visitLiteralBooleanExpression(ctx);
+    public BooleanNode visitLiteralBooleanExpression(HTMLParser.LiteralBooleanExpressionContext ctx) {
+        return new BooleanNode(Boolean.parseBoolean(ctx.NG_BOOLEAN().getText()));
     }
 
     @Override
@@ -151,18 +151,20 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     }
 
     @Override
-    public AbstractNode visitLiteralNumericExpression(HTMLParser.LiteralNumericExpressionContext ctx) {
-        return super.visitLiteralNumericExpression(ctx);
+    public DecimalNode visitLiteralNumericExpression(HTMLParser.LiteralNumericExpressionContext ctx) {
+        return new DecimalNode(Double.parseDouble(ctx.NG_DECIMAL().getText()));
     }
 
     @Override
     public AbstractNode visitFunctionCallExpression(HTMLParser.FunctionCallExpressionContext ctx) {
+        String functionName= ctx.expression().getText();//TODO Edit:: we don't always have a function name (e.g : expression with params f[3](1,3) ) , create new interface functionCallable?
         return super.visitFunctionCallExpression(ctx);
     }
 
     @Override
-    public AbstractNode visitLiteralObjectExpression(HTMLParser.LiteralObjectExpressionContext ctx) {
-        return super.visitLiteralObjectExpression(ctx);
+    public MapNode visitLiteralObjectExpression(HTMLParser.LiteralObjectExpressionContext ctx) {
+        MapNode map=(MapNode) visit(ctx.map());
+        return map;
     }
 
     @Override
@@ -181,13 +183,13 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     }
 
     @Override
-    public AbstractNode visitVariableNameExpression(HTMLParser.VariableNameExpressionContext ctx) {
-        return super.visitVariableNameExpression(ctx);
+    public VariableNode visitVariableNameExpression(HTMLParser.VariableNameExpressionContext ctx) {
+        return new VariableNode(ctx.NG_ID().getText());
     }
 
     @Override
-    public AbstractNode visitLiteralCharExpression(HTMLParser.LiteralCharExpressionContext ctx) {
-        return super.visitLiteralCharExpression(ctx);
+    public CharNode visitLiteralCharExpression(HTMLParser.LiteralCharExpressionContext ctx) {
+        return new CharNode(ctx.NG_CHAR().getText().charAt(0));
     }
 
     @Override
@@ -261,18 +263,29 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     }
 
     @Override
-    public AbstractNode visitNg_list(HTMLParser.Ng_listContext ctx) {
-        return super.visitNg_list(ctx);
+    public ListNode visitNg_list(HTMLParser.Ng_listContext ctx) {
+        ArrayList<Expression> elements=new ArrayList<>();
+        for (int i = 0; i <ctx.expression().size() ; i++) {
+            elements.add((Expression) visit(ctx.expression(i)));
+        }
+        return new ListNode(elements);
     }
 
     @Override
-    public AbstractNode visitMap_value(HTMLParser.Map_valueContext ctx) {
-        return super.visitMap_value(ctx);
+    public MapPairNode visitMap_value(HTMLParser.Map_valueContext ctx) {
+        MapPairNode keyValue= new MapPairNode();
+        keyValue.setKey(ctx.NG_ID().getText());
+        keyValue.setValue((Expression) visit(ctx.expression()));
+        return keyValue;
     }
 
     @Override
-    public AbstractNode visitMap(HTMLParser.MapContext ctx) {
-        return super.visitMap(ctx);
+    public MapNode visitMap(HTMLParser.MapContext ctx) {
+        ArrayList<MapPairNode> pairNodes=new ArrayList<>();
+        for (int i = 0; i <ctx.map_value().size() ; i++) {
+            pairNodes.add((MapPairNode) visit(ctx.map_value(i)));
+        }
+        return new MapNode(pairNodes);
     }
 
     @Override

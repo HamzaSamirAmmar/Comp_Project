@@ -3,27 +3,27 @@ package ast.nodes.expressions;
 import ast.nodes.util.Formatter;
 
 public class ConcatenationNode extends Expression implements Iterable,Logical,Concatable {
-    ValuableNode leftOperand;
-    ValuableNode rightOperand;
+    Expression leftOperand;//should be valuable
+    Expression rightOperand;//should be valuable
 
-    public ConcatenationNode(ValuableNode leftOperand, ValuableNode rightOperand) {
+    public ConcatenationNode(Expression leftOperand, Expression rightOperand) {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
 
-    public ValuableNode getLeftOperand() {
+    public Expression getLeftOperand() {
         return leftOperand;
     }
 
-    public void setLeftOperand(ValuableNode leftOperand) {
+    public void setLeftOperand(Expression leftOperand) {
         this.leftOperand = leftOperand;
     }
 
-    public ValuableNode getRightOperand() {
+    public Expression getRightOperand() {
         return rightOperand;
     }
 
-    public void setRightOperand(ValuableNode rightOperand) {
+    public void setRightOperand(Expression rightOperand) {
         this.rightOperand = rightOperand;
     }
 

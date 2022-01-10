@@ -1,15 +1,16 @@
 package ast.nodes.expressions.Math;
 
 import ast.nodes.expressions.Expression;
+import ast.nodes.expressions.Valuable;
 import ast.nodes.expressions.ValuableNode;
 import ast.nodes.util.Formatter;
 
-public class OneOperandMathematicalNode extends Expression {
+public class OneOperandMathematicalNode extends Expression implements Valuable {
     boolean operandIsLeft;
     String operator;
-    ValuableNode operand;
+    Expression operand;//should be valuable
 
-    public OneOperandMathematicalNode(boolean operandIsLeft, String operator, ValuableNode operand) {
+    public OneOperandMathematicalNode(boolean operandIsLeft, String operator, Expression operand) {
         this.operandIsLeft = operandIsLeft;
         this.operator = operator;
         this.operand = operand;
@@ -31,11 +32,11 @@ public class OneOperandMathematicalNode extends Expression {
         this.operator = operator;
     }
 
-    public ValuableNode getOperand() {
+    public Expression getOperand() {
         return operand;
     }
 
-    public void setOperand(ValuableNode operand) {
+    public void setOperand(Expression operand) {
         this.operand = operand;
     }
 

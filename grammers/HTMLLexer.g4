@@ -321,7 +321,7 @@ mode NG;
          : ' '-> channel(HIDDEN)
          ;
          NG_DECIMAL //this rule defines a decimal number (could contain a fraction)
-         :[0-9]+('.'[0-9]+)?
+         :('-')?[0-9]+('.'[0-9]+)?
          ;
          NG_CHAR
          : '\'' ([a-zA-Z0-9_] |'-' | '/'|'+'| ',' | '?' | '=' | ':' | ';' | '#' | ' ') '\''

@@ -1,18 +1,17 @@
-package ast.nodes.expressions.literal;
+package ast.nodes.expressions.literals;
 
 import ast.nodes.expressions.*;
 import ast.nodes.expressions.Iterable;
-import ast.nodes.htmlNodes.Mustache;
 import ast.nodes.util.Formatter;
 
 import java.util.ArrayList;
 
-public class FunctionCallNode extends Expression implements Iterable, Logical, Concatable {
+public class FunctionCallNode extends Expression implements Iterable,Valuable, Logical, Concatable {
     String functionName;
-    ArrayList<ValuableNode> parameters;
+    ArrayList<Expression> parameters;
 
 
-    public FunctionCallNode(String functionName, ArrayList<ValuableNode> parameters) {
+    public FunctionCallNode(String functionName, ArrayList<Expression> parameters) {
         this.functionName = functionName;
         this.parameters = parameters;
     }
@@ -25,11 +24,11 @@ public class FunctionCallNode extends Expression implements Iterable, Logical, C
         this.functionName = functionName;
     }
 
-    public ArrayList<ValuableNode> getParameters() {
+    public ArrayList<Expression> getParameters() {
         return parameters;
     }
 
-    public void setParameters(ArrayList<ValuableNode> parameters) {
+    public void setParameters(ArrayList<Expression> parameters) {
         this.parameters = parameters;
     }
 
@@ -41,7 +40,7 @@ public class FunctionCallNode extends Expression implements Iterable, Logical, C
     @Override
     protected Formatter nodeValue(Formatter formatter) {
          formatter.addProperty("functionName",functionName) ;
-        for (ValuableNode parameter: parameters)
+        for (Expression parameter: parameters)
             formatter.object(parameter.toString());
         return formatter ;
     }

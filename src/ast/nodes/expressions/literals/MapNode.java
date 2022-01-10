@@ -1,24 +1,23 @@
-package ast.nodes.expressions.literal;
+package ast.nodes.expressions.literals;
 
 import ast.nodes.expressions.Expression;
 import ast.nodes.expressions.Iterable;
-import ast.nodes.htmlNodes.HTMLElement;
 import ast.nodes.util.Formatter;
 
 import java.util.ArrayList;
 
-public class Map extends Expression implements Iterable {
-    ArrayList<MapPair> pairs;
+public class MapNode extends Expression implements Iterable {
+    ArrayList<MapPairNode> pairs;
 
-    public Map(ArrayList<MapPair> pairs) {
+    public MapNode(ArrayList<MapPairNode> pairs) {
         this.pairs = pairs;
     }
 
-    public ArrayList<MapPair> getPairs() {
+    public ArrayList<MapPairNode> getPairs() {
         return pairs;
     }
 
-    public void setPairs(ArrayList<MapPair> pairs) {
+    public void setPairs(ArrayList<MapPairNode> pairs) {
         this.pairs = pairs;
     }
 
@@ -30,7 +29,7 @@ public class Map extends Expression implements Iterable {
     @Override
     protected Formatter nodeValue(Formatter formatter) {
 
-        for (MapPair pair: pairs)
+        for (MapPairNode pair: pairs)
             formatter.object(pair.toString());
         return formatter;
     }

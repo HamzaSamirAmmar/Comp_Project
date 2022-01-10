@@ -6,17 +6,17 @@ import ast.nodes.expressions.LogicalNode;
 import ast.nodes.util.Formatter;
 
 public class OneOperandCondition extends Condition {
-    LogicalNode operand;
+    Expression operand;//should be logical
 
     public OneOperandCondition(LogicalNode operand) {
         this.operand = operand;
     }
 
-    public LogicalNode getOperand() {
+    public Expression getOperand() {
         return operand;
     }
 
-    public void setOperand(LogicalNode operand) {
+    public void setOperand(Expression operand) {
         this.operand = operand;
     }
 

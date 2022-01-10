@@ -3,37 +3,37 @@ package ast.nodes.expressions;
 import ast.nodes.util.Formatter;
 
 public class TernaryExpressionNode extends Expression implements Iterable,Logical{
-    LogicalNode conditionOperand;
-    ValuableNode firstExpression;
-    ValuableNode secondExpression;
+    Expression conditionOperand;//should be logical
+    Expression firstExpression;//should be valuable
+    Expression secondExpression;//should be valuable
 
-    public TernaryExpressionNode(LogicalNode conditionOperand, ValuableNode firstExpression, ValuableNode secondExpression) {
+    public TernaryExpressionNode(Expression conditionOperand, Expression firstExpression, Expression secondExpression) {
         this.conditionOperand = conditionOperand;
         this.firstExpression = firstExpression;
         this.secondExpression = secondExpression;
     }
 
-    public LogicalNode getConditionOperand() {
+    public Expression getConditionOperand() {
         return conditionOperand;
     }
 
-    public void setConditionOperand(LogicalNode conditionOperand) {
+    public void setConditionOperand(Expression conditionOperand) {
         this.conditionOperand = conditionOperand;
     }
 
-    public ValuableNode getFirstExpression() {
+    public Expression getFirstExpression() {
         return firstExpression;
     }
 
-    public void setFirstExpression(ValuableNode firstExpression) {
+    public void setFirstExpression(Expression firstExpression) {
         this.firstExpression = firstExpression;
     }
 
-    public ValuableNode getSecondExpression() {
+    public Expression getSecondExpression() {
         return secondExpression;
     }
 
-    public void setSecondExpression(ValuableNode secondExpression) {
+    public void setSecondExpression(Expression secondExpression) {
         this.secondExpression = secondExpression;
     }
 

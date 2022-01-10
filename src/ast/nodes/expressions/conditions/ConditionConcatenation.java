@@ -1,15 +1,16 @@
 package ast.nodes.expressions.conditions;
 
+import ast.nodes.expressions.Expression;
 import ast.nodes.expressions.Logical;
 import ast.nodes.expressions.LogicalNode;
 import ast.nodes.util.Formatter;
 
 public class ConditionConcatenation extends Condition {
     String operator;
-    LogicalNode leftCondition;
-    LogicalNode rightCondition;
+    Expression leftCondition;//should be logical
+    Expression rightCondition;//should be logical
 
-    public ConditionConcatenation(String operator, LogicalNode leftCondition, LogicalNode rightCondition) {
+    public ConditionConcatenation(String operator, Expression leftCondition, Expression rightCondition) {
         this.operator = operator;
         this.leftCondition = leftCondition;
         this.rightCondition = rightCondition;
@@ -23,19 +24,19 @@ public class ConditionConcatenation extends Condition {
         this.operator = operator;
     }
 
-    public LogicalNode getLeftCondition() {
+    public Expression getLeftCondition() {
         return leftCondition;
     }
 
-    public void setLeftCondition(LogicalNode leftCondition) {
+    public void setLeftCondition(Expression leftCondition) {
         this.leftCondition = leftCondition;
     }
 
-    public LogicalNode getRightCondition() {
+    public Expression getRightCondition() {
         return rightCondition;
     }
 
-    public void setRightCondition(LogicalNode rightCondition) {
+    public void setRightCondition(Expression rightCondition) {
         this.rightCondition = rightCondition;
     }
 

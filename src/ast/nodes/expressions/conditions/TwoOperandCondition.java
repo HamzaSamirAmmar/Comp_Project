@@ -7,7 +7,7 @@ import ast.nodes.expressions.ValuableNode;
 import ast.nodes.util.Formatter;
 
 public class TwoOperandCondition extends Condition  {
-    ValuableNode leftOperand,rightOperand;
+    Expression leftOperand,rightOperand;//should be valuable
     String operator;
 
 
@@ -17,19 +17,19 @@ public class TwoOperandCondition extends Condition  {
         this.operator = operator;
     }
 
-    public ValuableNode getLeftOperand() {
+    public Expression getLeftOperand() {
         return leftOperand;
     }
 
-    public void setLeftOperand(ValuableNode leftOperand) {
+    public void setLeftOperand(Expression leftOperand) {
         this.leftOperand = leftOperand;
     }
 
-    public ValuableNode getRightOperand() {
+    public Expression getRightOperand() {
         return rightOperand;
     }
 
-    public void setRightOperand(ValuableNode rightOperand) {
+    public void setRightOperand(Expression rightOperand) {
         this.rightOperand = rightOperand;
     }
 

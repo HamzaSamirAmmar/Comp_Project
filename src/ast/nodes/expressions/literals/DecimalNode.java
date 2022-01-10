@@ -1,9 +1,10 @@
-package ast.nodes.expressions.literal;
+package ast.nodes.expressions.literals;
 
 import ast.nodes.expressions.Expression;
+import ast.nodes.expressions.Valuable;
 import ast.nodes.util.Formatter;
 
-public class DecimalNode extends Expression {
+public class DecimalNode extends Expression implements Valuable {
     Double decimalValue;
 
     public DecimalNode(Double decimalValue) {

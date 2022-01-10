@@ -3,27 +3,27 @@ package ast.nodes.expressions;
 import ast.nodes.util.Formatter;
 
 public class IndexedExpressionNode extends Expression implements Iterable,Logical,Concatable{
-    IterableNode indexed;
-    ValuableNode index;
+    Expression indexed;//should be iterable
+    Expression index;//should be valuable
 
-    public IndexedExpressionNode(IterableNode indexed, ValuableNode index) {
+    public IndexedExpressionNode(Expression indexed, Expression index) {
         this.indexed = indexed;
         this.index = index;
     }
 
-    public IterableNode getIndexed() {
+    public Expression getIndexed() {
         return indexed;
     }
 
-    public void setIndexed(IterableNode indexed) {
+    public void setIndexed(Expression indexed) {
         this.indexed = indexed;
     }
 
-    public ValuableNode getIndex() {
+    public Expression getIndex() {
         return index;
     }
 
-    public void setIndex(ValuableNode index) {
+    public void setIndex(Expression index) {
         this.index = index;
     }
 

@@ -1,12 +1,10 @@
-package ast.nodes.expressions.literal;
+package ast.nodes.expressions.literals;
 
-import ast.nodes.expressions.Concatable;
-import ast.nodes.expressions.Expression;
+import ast.nodes.expressions.*;
 import ast.nodes.expressions.Iterable;
-import ast.nodes.expressions.Logical;
 import ast.nodes.util.Formatter;
 
-public class VariableNode extends Expression implements Iterable, Logical, Concatable {
+public class VariableNode extends Expression implements Valuable, Iterable, Logical, Concatable {
     String variableName;
 
     public VariableNode(String variableName) {
