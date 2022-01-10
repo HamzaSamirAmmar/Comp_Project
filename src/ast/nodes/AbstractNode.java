@@ -24,7 +24,7 @@ public abstract class AbstractNode {
     }
 
     abstract protected String nodeName();
-    abstract protected Formatter nodeValue(Formatter value);
+    abstract protected Formatter nodeValue(Formatter formatter);
 
     public String format(Formatter formatter) {
         nodeValue(formatter);

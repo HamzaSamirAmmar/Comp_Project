@@ -52,7 +52,7 @@ expression
        | expression MULTIPLICATIVE_OPERATOR expression                #MathematicalExpression
        | expression ADDITIVE_OPERATOR expression                      #MathematicalExpression
        | expression (BRACKET_OPEN (params)? BRACKET_CLOSE)            #FunctionCallExpression
-       | expression PIPE expression COLON params                      #PipeExpression
+       | expression PIPE expression (COLON params)?                   #PipeExpression
        | NG_ID                                                        #VariableNameExpression
        | NG_DECIMAL                                                   #LiteralNumericExpression
        | NG_CHAR                                                      #LiteralCharExpression

@@ -2,11 +2,10 @@ package ast.nodes.attributes;
 
 import ast.nodes.util.Formatter;
 
-public class normalAttribute extends HTMLAttribute {
-    String name;
+public class NormalAttribute extends HTMLAttribute {
     String value;
 
-    public normalAttribute(String name, String value) {
+    public NormalAttribute(String name, String value) {
         this.name = name;
         this.value = value;
     }

@@ -2,7 +2,7 @@ package ast.nodes.expressions;
 
 import ast.nodes.util.Formatter;
 
-public class IndexedExpressionNode extends Expression implements Iterable,Logical,Concatable{
+public class IndexedExpressionNode extends Expression implements Iterable,Logical,Concatable,FunctionCallable{
     Expression indexed;//should be iterable
     Expression index;//should be valuable
 

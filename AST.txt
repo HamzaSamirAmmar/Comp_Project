@@ -11,18 +11,66 @@ htmlDocument: {
 				htmlTagContent: {
 					tagElement: {
 						tagName: p,
-						normalAttribute: {
-							attributeName: class,
-							value: "classname",
-						},
 						htmlTagContent: {
-							text: {
-								textValue: 
-							    Test Test ,
+							mustache: {
+								Exp(booleanValue): {
+									boolValue: true,
+								},
 							},
-							mustach: {
-								Exp(string): {
-									stringValue: 'heyo',
+							mustache: {
+								Exp(charValue): {
+									charValue: l,
+								},
+							},
+							mustache: {
+								Exp(decimalValue): {
+									decimalValue: 9.623,
+								},
+							},
+							mustache: {
+								Exp(FunctionCall): {
+									variableName: {
+										variableName: f,
+									},
+									decimalValue: {
+										decimalValue: 1.0,
+									},
+									string: {
+										stringValue: ll,
+									},
+								},
+							},
+							mustache: {
+								Exp(list): {
+									list: [
+										decimalValue: {
+											decimalValue: 1.0,
+										},
+										decimalValue: {
+											decimalValue: 2.0,
+										}
+									],
+								},
+							},
+							mustache: {
+								Exp(map): {
+									pair: {
+										k: charValue: {
+										charValue: v,
+									},
+									},
+									pair: {
+										f: FunctionCall: {
+										variableName: {
+											variableName: f,
+										},
+									},
+									},
+								},
+							},
+							mustache: {
+								Exp(variableName): {
+									variableName: variable,
 								},
 							},
 						},

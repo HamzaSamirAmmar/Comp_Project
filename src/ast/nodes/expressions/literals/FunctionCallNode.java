@@ -6,22 +6,24 @@ import ast.nodes.util.Formatter;
 
 import java.util.ArrayList;
 
-public class FunctionCallNode extends Expression implements Iterable,Valuable, Logical, Concatable {
-    String functionName;
+public class FunctionCallNode extends Expression implements Iterable,Valuable, Logical, Concatable,FunctionCallable {
+    Expression functionCall;
     ArrayList<Expression> parameters;
 
 
-    public FunctionCallNode(String functionName, ArrayList<Expression> parameters) {
-        this.functionName = functionName;
+    public FunctionCallNode(Expression functionCall, ArrayList<Expression> parameters) {
+        if(!(functionCall instanceof FunctionCallable))
+            System.err.println("invalid function call!");
+        this.functionCall = functionCall;
         this.parameters = parameters;
     }
 
-    public String getFunctionName() {
-        return functionName;
+    public Expression getFunctionCall() {
+        return functionCall;
     }
 
-    public void setFunctionName(String functionName) {
-        this.functionName = functionName;
+    public void setFunctionCall(Expression functionCall) {
+        this.functionCall = functionCall;
     }
 
     public ArrayList<Expression> getParameters() {
@@ -39,7 +41,7 @@ public class FunctionCallNode extends Expression implements Iterable,Valuable, L
 
     @Override
     protected Formatter nodeValue(Formatter formatter) {
-         formatter.addProperty("functionName",functionName) ;
+         formatter.object( functionCall.toString()) ;
         for (Expression parameter: parameters)
             formatter.object(parameter.toString());
         return formatter ;

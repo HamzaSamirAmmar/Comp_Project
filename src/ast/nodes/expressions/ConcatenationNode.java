@@ -2,7 +2,7 @@ package ast.nodes.expressions;
 
 import ast.nodes.util.Formatter;
 
-public class ConcatenationNode extends Expression implements Iterable,Logical,Concatable {
+public class ConcatenationNode extends Expression implements Valuable,Iterable,Logical,Concatable,FunctionCallable {
     Expression leftOperand;//should be valuable
     Expression rightOperand;//should be valuable
 

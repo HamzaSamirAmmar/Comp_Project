@@ -4,7 +4,7 @@ import ast.nodes.expressions.*;
 import ast.nodes.expressions.Iterable;
 import ast.nodes.util.Formatter;
 
-public class VariableNode extends Expression implements Valuable, Iterable, Logical, Concatable {
+public class VariableNode extends Expression implements Valuable, Iterable, Logical, Concatable,FunctionCallable {
     String variableName;
 
     public VariableNode(String variableName) {

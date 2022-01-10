@@ -3,7 +3,7 @@ package ast.nodes.expressions;
 import ast.nodes.expressions.literals.FunctionCallNode;
 import ast.nodes.util.Formatter;
 
-public class PipeExpressionNode extends Expression implements Iterable,Logical,Concatable{
+public class PipeExpressionNode extends Expression implements Iterable,Logical,Concatable,FunctionCallable{
     Expression firstOperand;//should be valuable? maybe not ,any expression should work
     FunctionCallNode functionCall;
 

@@ -1,8 +1,7 @@
 package ast.visitors;
 
 import ast.nodes.AbstractNode;
-import ast.nodes.attributes.HTMLAttribute;
-import ast.nodes.attributes.normalAttribute;
+import ast.nodes.attributes.*;
 import ast.nodes.expressions.Expression;
 import ast.nodes.expressions.literals.*;
 import ast.nodes.htmlNodes.*;
@@ -96,9 +95,16 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
         System.out.println("in attribute visitor");
         HTMLAttribute attribute=null;
         if(ctx.TAG_NAME() !=null)//case not a NG attribute
-            return new normalAttribute(ctx.TAG_NAME().getText(),ctx.ATTVALUE_VALUE().getText());
-        else //TODO ng attributes cases
-            return null;
+            return new NormalAttribute(ctx.TAG_NAME().getText(),ctx.ATTVALUE_VALUE().getText());
+        else if(ctx.ng_if()!=null)
+            return visit(ctx.ng_if());
+        else if(ctx.ng_hide()!=null)
+            return visit(ctx.ng_hide());
+        else if(ctx.ng_show()!=null)
+            return visit(ctx.ng_show());
+        else if(ctx.ng_event()!=null)
+            return visit(ctx.ng_event());
+        else return null;//TODO implement the rest
     }
 
     @Override
@@ -157,8 +163,15 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitFunctionCallExpression(HTMLParser.FunctionCallExpressionContext ctx) {
-        String functionName= ctx.expression().getText();//TODO Edit:: we don't always have a function name (e.g : expression with params f[3](1,3) ) , create new interface functionCallable?
-        return super.visitFunctionCallExpression(ctx);
+        Expression functionCall=(Expression)visit(ctx.expression());
+        ArrayList<Expression> parameters=new ArrayList<>();
+        if(ctx.params()!=null)
+        for (int i = 0; i <ctx.params()
+                .expression()
+                .size() ; i++) {
+            parameters.add((Expression) visit(ctx.params().expression(i)));
+        }
+        return new FunctionCallNode(functionCall,parameters);
     }
 
     @Override
@@ -169,7 +182,9 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitLiteralStringExpression(HTMLParser.LiteralStringExpressionContext ctx) {
-        return new StringNode(ctx.NG_STRING().getText());
+        String fullText=ctx.NG_STRING().getText();
+        System.out.println(fullText);
+        return new StringNode(fullText.substring(1,fullText.length()-1));
     }
 
     @Override
@@ -189,7 +204,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public CharNode visitLiteralCharExpression(HTMLParser.LiteralCharExpressionContext ctx) {
-        return new CharNode(ctx.NG_CHAR().getText().charAt(0));
+        return new CharNode(ctx.NG_CHAR().getText().charAt(1));
     }
 
     @Override
@@ -208,18 +223,21 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     }
 
     @Override
-    public AbstractNode visitNg_if(HTMLParser.Ng_ifContext ctx) {
-        return super.visitNg_if(ctx);
+    public NGIfAttribute visitNg_if(HTMLParser.Ng_ifContext ctx) {
+        Expression condition=(Expression) visit(ctx.expression());
+        return new NGIfAttribute(condition);
     }
 
     @Override
-    public AbstractNode visitNg_hide(HTMLParser.Ng_hideContext ctx) {
-        return super.visitNg_hide(ctx);
+    public NGHideAttribute visitNg_hide(HTMLParser.Ng_hideContext ctx) {
+        Expression condition=(Expression) visit(ctx.expression());
+        return new NGHideAttribute(condition);
     }
 
     @Override
-    public AbstractNode visitNg_show(HTMLParser.Ng_showContext ctx) {
-        return super.visitNg_show(ctx);
+    public NGShowAttribute visitNg_show(HTMLParser.Ng_showContext ctx) {
+        Expression condition=(Expression) visit(ctx.expression());
+        return new NGShowAttribute(condition);
     }
 
     @Override
@@ -253,8 +271,9 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     }
 
     @Override
-    public AbstractNode visitNg_event(HTMLParser.Ng_eventContext ctx) {
-        return super.visitNg_event(ctx);
+    public NGEventAttribute visitNg_event(HTMLParser.Ng_eventContext ctx) {
+        Expression functionCall=(Expression)visit(ctx.expression());
+        return new NGEventAttribute(functionCall);
     }
 
     @Override
