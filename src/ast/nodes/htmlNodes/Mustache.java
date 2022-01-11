@@ -29,7 +29,7 @@ public class Mustache extends AbstractNode {
 
     @Override
     protected Formatter nodeValue(Formatter formatter) {
-            return formatter.object(expression.toString("Exp"));
+            return formatter.object(expression.toString("MustacheContent"));
 
     }
 }

@@ -6,10 +6,14 @@ import ast.nodes.expressions.LogicalNode;
 import ast.nodes.util.Formatter;
 
 public class OneOperandCondition extends Condition {
+
     Expression operand;//should be logical
 
-    public OneOperandCondition(LogicalNode operand) {
-        this.operand = operand;
+
+    public OneOperandCondition(Expression operand) {
+        if(operand instanceof Logical)
+            this.operand = operand;
+        else System.err.println("operand should be logical expression");
     }
 
     public Expression getOperand() {
@@ -17,7 +21,9 @@ public class OneOperandCondition extends Condition {
     }
 
     public void setOperand(Expression operand) {
-        this.operand = operand;
+        if(operand instanceof Logical)
+            this.operand = operand;
+        else System.err.println("operand should be logical expression");
     }
 
     @Override
@@ -28,7 +34,7 @@ public class OneOperandCondition extends Condition {
     @Override
     protected Formatter nodeValue(Formatter formatter) {
 
-        formatter.object(operand.toString());
+        formatter.object(operand.toString("operand"));
         return formatter;
     }
 }

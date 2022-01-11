@@ -8,12 +8,17 @@ import ast.nodes.util.Formatter;
 
 public class TwoOperandCondition extends Condition  {
     Expression leftOperand,rightOperand;//should be valuable
+
     String operator;
 
 
-    public TwoOperandCondition(ValuableNode leftOperand, ValuableNode rightOperand, String operator) {
-        this.leftOperand = leftOperand;
-        this.rightOperand = rightOperand;
+    public TwoOperandCondition(Expression leftOperand, Expression rightOperand, String operator) {
+        if(leftOperand instanceof Valuable)
+            this.leftOperand = leftOperand;
+        else throw new RuntimeException("left operand should be a valuable expression");
+        if(rightOperand instanceof Valuable)
+            this.rightOperand = rightOperand;
+        else  throw new RuntimeException("right operand should be a valuable expression");
         this.operator = operator;
     }
 
@@ -22,7 +27,9 @@ public class TwoOperandCondition extends Condition  {
     }
 
     public void setLeftOperand(Expression leftOperand) {
-        this.leftOperand = leftOperand;
+        if(leftOperand instanceof Valuable)
+            this.leftOperand = leftOperand;
+        else throw new RuntimeException("left operand should be a valuable expression");
     }
 
     public Expression getRightOperand() {
@@ -30,7 +37,9 @@ public class TwoOperandCondition extends Condition  {
     }
 
     public void setRightOperand(Expression rightOperand) {
-        this.rightOperand = rightOperand;
+        if(rightOperand instanceof Valuable)
+            this.rightOperand = rightOperand;
+        else  System.err.println("right operand should be a valuable expression");
     }
 
     public String getOperator() {
@@ -46,7 +55,7 @@ public class TwoOperandCondition extends Condition  {
     }
     @Override
     protected Formatter nodeValue(Formatter formatter) {
-        formatter.object(leftOperand.toString()).addProperty("operator",operator).object(rightOperand.toString());
+        formatter.object(leftOperand.toString("leftOperand")).addProperty("operator",operator).object(rightOperand.toString("rightOperand"));
         return formatter;
     }
 }

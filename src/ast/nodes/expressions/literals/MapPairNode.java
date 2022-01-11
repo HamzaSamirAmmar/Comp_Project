@@ -39,7 +39,9 @@ public class MapPairNode extends Expression {
 
     @Override
     protected Formatter nodeValue(Formatter formatter) {
-
-        return formatter.addProperty(key,value.toString());
+        //formatter.addProperty("value",value.toString());
+        formatter.addProperty("key",key);
+        formatter.addProperty("value",value.toString());
+        return formatter;
     }
 }

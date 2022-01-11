@@ -387,11 +387,10 @@ mode TYPE ;
     : TYPE_WHITESPACE*'!' TYPE_WHITESPACE* '\'' TYPE_WHITESPACE*
     ;
     INPUT_TYPE
-     : 'text'
-     | 'number'
-     | 'date'
-     | 'email'
-     ;
+      :'text'| 'number'| 'date'| 'email' |'button'|'checkbox'|'color'
+          |'datetime-local'|'file'|'hidden'|'image'|'month'|'password'
+          |'radio'|'range'|'reset'|'search'|'submit'|'tel'|'time'|'url'|'week'
+      ;
      TYPE_QUOTE
      : '\'' ->popMode
      ;

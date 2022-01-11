@@ -1,16 +1,55 @@
-<html>
-<head>
-</head>
-<body>
-<p >
-    {{TRUE}}
-    {{'l'}}
-    {{9.623}}
-    {{f(1,'ll')}}
-    {{[1,2]}}
-    {{ {k:'v', f:f()} }}
-    {{variable}}
-</p>
-</body>
+<div    app!'myApp'>
+<!-- for (variable in [direct array or variable name]): parent tag -->
+<!-- ---------FOR---------------------------  -->
+<!-- standard -->
+<p ng-for!'x in t'> {{x}} </p>
 
-</html>
+<!-- index -->
+<p ng-for!'x in t;i=index'> {{x}}, {{i}} </p>
+
+<!-- direct array -->
+<p ng-for!'x in ['1','2','4'];i=index'> {{x}}, {{i}} </p>
+
+<!-- key/value of an object -->
+<p ng-for!'k,v in obj'> {{k}}:{{v}} </p>
+<script>
+        var obj = { name: 'Compiler', year: 2020, type: 'COVID'  }
+    </script>
+
+<p ng-for!'k,v in { name:'Compiler', year:2020, type:'COVID' }'> {{k}}:{{v}} </p>
+
+<!-- -----------------switch-------------------  -->
+<container-element ng-switch!'object.value'>
+<!-- the same view can be shown in more than one case -->
+<some-element ng-switch-case!'match_expression_1'>...</some-element>
+<some-element ng-switch-case!'match_expression_2'>...</some-element>
+<!--default case when there are no matches -->
+<some-element ng-switchDefault>...</some-element>
+</container-element>
+
+<!-- ---------------show/hide/if---------------------  -->
+<p ng-show!'object.variable.var[2]'></p>
+<p ng-show!'object[2].variable'></p>
+<p ng-show!'object[2].variable.var[q[2]()]'></p>
+<p ng-hide!'myFunction() < 4'></p>
+<p ng-if!'object.variable > 2'></p>
+
+<!-- ---------------model---------------------  -->
+<input type!'text' ng-model!'xx' />
+<script>
+        var xx = 'Hi'
+    </script>
+
+<input type!'text' ng-model!'xx' />
+<p>
+    xx | myFormater:'yyyyMMdd'
+    {{xx |  myFormater:'yyyyMMdd' }}
+
+    {{xx ? 2 : 1}}
+    <!-- if shortcut / one line codition -->
+</p>
+
+<!-- ---------------events---------------------  -->
+<span @click!'myFunction()'></span>
+<span @mouseover!'myFunction()'></span>
+</div>

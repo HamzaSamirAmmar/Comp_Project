@@ -2,7 +2,7 @@ package ast.nodes.expressions;
 
 import ast.nodes.util.Formatter;
 
-public class TernaryExpressionNode extends Expression implements Iterable,Logical,FunctionCallable{
+public class TernaryExpressionNode extends Expression implements Iterable,Logical{
     Expression conditionOperand;//should be logical
     Expression firstExpression;//should be valuable
     Expression secondExpression;//should be valuable

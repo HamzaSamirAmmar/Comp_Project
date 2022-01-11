@@ -2,18 +2,24 @@ package ast.nodes.expressions.conditions;
 
 import ast.nodes.expressions.Expression;
 import ast.nodes.expressions.Logical;
-import ast.nodes.expressions.LogicalNode;
+
 import ast.nodes.util.Formatter;
 
 public class ConditionConcatenation extends Condition {
     String operator;
+
     Expression leftCondition;//should be logical
     Expression rightCondition;//should be logical
 
+
     public ConditionConcatenation(String operator, Expression leftCondition, Expression rightCondition) {
         this.operator = operator;
-        this.leftCondition = leftCondition;
-        this.rightCondition = rightCondition;
+        if(leftCondition instanceof Logical)
+            this.leftCondition = leftCondition;
+        else System.err.println("the left condition should be logical expression ");
+        if(rightCondition instanceof Logical)
+            this.rightCondition = rightCondition;
+        else System.err.println("the right condition should be logical expression ");
     }
 
     public String getOperator() {
@@ -29,7 +35,9 @@ public class ConditionConcatenation extends Condition {
     }
 
     public void setLeftCondition(Expression leftCondition) {
-        this.leftCondition = leftCondition;
+        if(leftCondition instanceof Logical)
+            this.leftCondition = leftCondition;
+        else System.err.println("the left condition should be logical expression ");
     }
 
     public Expression getRightCondition() {
@@ -37,7 +45,9 @@ public class ConditionConcatenation extends Condition {
     }
 
     public void setRightCondition(Expression rightCondition) {
-        this.rightCondition = rightCondition;
+        if(rightCondition instanceof Logical)
+            this.rightCondition = rightCondition;
+        else System.err.println("the right condition should be logical expression ");
     }
 
     @Override
@@ -47,7 +57,7 @@ public class ConditionConcatenation extends Condition {
 
     @Override
     protected Formatter nodeValue(Formatter formatter) {
-        formatter.object(leftCondition.toString()).addProperty("operator",operator).object(rightCondition.toString());
+        formatter.object(leftCondition.toString("leftCondition")).addProperty("operator",operator).object(rightCondition.toString("rightCondition"));
         return formatter;
     }
 }

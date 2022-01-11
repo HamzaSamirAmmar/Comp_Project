@@ -21,11 +21,11 @@ public class VariableNode extends Expression implements Valuable, Iterable, Logi
 
     @Override
     protected String nodeName() {
-        return "variableName";
+        return "variable/functionName";
     }
 
     @Override
     protected Formatter nodeValue(Formatter formatter) {
-        return formatter.addProperty("variableName",variableName);
+        return formatter.addProperty("name",variableName);
     }
 }

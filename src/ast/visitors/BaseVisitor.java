@@ -2,7 +2,16 @@ package ast.visitors;
 
 import ast.nodes.AbstractNode;
 import ast.nodes.attributes.*;
-import ast.nodes.expressions.Expression;
+import ast.nodes.attributes.forNodes.ForEachNode;
+import ast.nodes.attributes.forNodes.Map;
+import ast.nodes.attributes.forNodes.IteratorPairNode;
+import ast.nodes.expressions.*;
+import ast.nodes.expressions.Iterable;
+import ast.nodes.expressions.Math.AdditiveNode;
+import ast.nodes.expressions.Math.OneOperandMathematicalNode;
+import ast.nodes.expressions.conditions.ConditionConcatenation;
+import ast.nodes.expressions.conditions.OneOperandCondition;
+import ast.nodes.expressions.conditions.TwoOperandCondition;
 import ast.nodes.expressions.literals.*;
 import ast.nodes.htmlNodes.*;
 import generated.HTMLParser;
@@ -43,7 +52,9 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
         else {
             HTMLTag element=new HTMLTag();
             element.setTagName(ctx.TAG_NAME(0).getText());
-            element.setContent((HTMLContent) visit(ctx.htmlContent()));
+            if(ctx.htmlContent()!=null){
+                element.setContent((HTMLContent) visit(ctx.htmlContent()));
+            }
             ArrayList<HTMLAttribute> attributes = new ArrayList<>();
             for (int i = 0; i < ctx.htmlAttribute().size(); i++) {
                 attributes.add((HTMLAttribute) visit(ctx.htmlAttribute(i)));
@@ -83,7 +94,6 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     public AbstractNode visitMustache(HTMLParser.MustacheContext ctx) {
         System.out.println("in mustache visitor");
         Mustache mustache=new Mustache();
-        //TODO process expressions
         Expression exp=(Expression) visit(ctx.expression());
         mustache.setExpression(exp);
         return mustache;
@@ -96,6 +106,16 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
         HTMLAttribute attribute=null;
         if(ctx.TAG_NAME() !=null)//case not a NG attribute
             return new NormalAttribute(ctx.TAG_NAME().getText(),ctx.ATTVALUE_VALUE().getText());
+        else if(ctx.ng_app()!=null)
+            return visit(ctx.ng_app());
+        else if(ctx.ng_for()!=null)
+            return visit(ctx.ng_for());
+        else if(ctx.ng_switch()!=null)
+            return visit(ctx.ng_switch());
+        else if(ctx.ng_switch_case()!=null)
+            return visit(ctx.ng_switch_case());
+        else if(ctx.ng_switch_default()!=null)
+            return visit(ctx.ng_switch_default());
         else if(ctx.ng_if()!=null)
             return visit(ctx.ng_if());
         else if(ctx.ng_hide()!=null)
@@ -104,6 +124,10 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
             return visit(ctx.ng_show());
         else if(ctx.ng_event()!=null)
             return visit(ctx.ng_event());
+        else if(ctx.ng_model()!=null)
+            return visit(ctx.ng_model());
+        else if(ctx.ng_type()!=null)
+            return visit(ctx.ng_type());
         else return null;//TODO implement the rest
     }
 
@@ -116,30 +140,71 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     public AbstractNode visitLiteralArrayExpression(HTMLParser.LiteralArrayExpressionContext ctx) {
         return super.visitLiteralArrayExpression(ctx);
     }
-
     @Override
     public AbstractNode visitTernaryExpression(HTMLParser.TernaryExpressionContext ctx) {
-        return super.visitTernaryExpression(ctx);
+        if (ctx.QUESTION_MARK() != null && ctx.COLON() != null) {
+            Expression conditionOperand = (Expression) visit(ctx.expression(0));
+            Expression firstExpression = (Expression) visit(ctx.expression(1));
+            Expression secondExpression = (Expression) visit(ctx.expression(2));
+            if (conditionOperand instanceof Logical &&
+                    firstExpression instanceof Valuable &&
+                    secondExpression instanceof Valuable
+            )
+                return new TernaryExpressionNode(conditionOperand, firstExpression, secondExpression);
+        }
+        throw new RuntimeException("Invalid ternary expression");
     }
 
     @Override
     public AbstractNode visitTwoOperandsConditionExpression(HTMLParser.TwoOperandsConditionExpressionContext ctx) {
-        return super.visitTwoOperandsConditionExpression(ctx);
+        System.out.println("in two operands condition visitor");
+        Expression leftOperand = (Expression) visit(ctx.expression(0));
+        Expression rightOperand = (Expression) visit(ctx.expression(1));
+        String operator  = ctx.NG_OPERATOR_TWO_OPERAND().getText();
+
+        return new TwoOperandCondition(leftOperand,rightOperand,operator);
     }
 
     @Override
     public AbstractNode visitMathematicalExpression(HTMLParser.MathematicalExpressionContext ctx) {
-        return super.visitMathematicalExpression(ctx);
+        System.out.println("Math is Math, and nothing else");
+        if (ctx.ADDITIVE_OPERATOR() != null) {
+            System.out.println("Additive");
+            String operator = ctx.ADDITIVE_OPERATOR().getText();
+            Expression leftOperand = (Expression) visit(ctx.expression(0));
+            Expression rightOperand = (Expression) visit(ctx.expression(1));
+            return new AdditiveNode(leftOperand, rightOperand, operator);
+        } else {
+            System.out.println("Multiplication");
+            String operator = ctx.MULTIPLICATIVE_OPERATOR().getText();
+            Expression leftOperand = (Expression) visit(ctx.expression(0));
+            Expression rightOperand = (Expression) visit(ctx.expression(1));
+            return new AdditiveNode(leftOperand, rightOperand, operator);
+        }
     }
 
     @Override
     public AbstractNode visitIndexedVariableExpression(HTMLParser.IndexedVariableExpressionContext ctx) {
-        return super.visitIndexedVariableExpression(ctx);
+        if (ctx.SQUARE_OPEN() != null && ctx.SQUARE_CLOSE() != null) {
+            Expression indexed = (Expression) visit(ctx.expression(0));
+            Expression index = (Expression) visit(ctx.expression(1));
+            if (indexed instanceof Iterable && index instanceof Valuable)
+                return new IndexedExpressionNode(indexed, index);
+        }
+        throw new RuntimeException("Invalid Indexed Variable Expression");
     }
 
     @Override
     public AbstractNode visitPipeExpression(HTMLParser.PipeExpressionContext ctx) {
-        return super.visitPipeExpression(ctx);
+        System.out.println("in pipe Expression visitor");
+
+        Expression firstOperand = (Expression) visit(ctx.expression(0));
+        Expression functionName = (Expression) visit(ctx.expression(1));
+        FunctionCallNode params = (FunctionCallNode)visit(ctx.params());
+
+        params.setFunctionCall(functionName);
+
+        return new PipeExpressionNode(firstOperand,params);
     }
 
     @Override
@@ -149,11 +214,18 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitOneOperandConditionExpression(HTMLParser.OneOperandConditionExpressionContext ctx) {
-        return super.visitOneOperandConditionExpression(ctx);
+        System.out.println("in one operand condition visitor");
+        Expression operand = (Expression) visit(ctx.expression());
+        return new OneOperandCondition(operand);
     }
+
     @Override
     public AbstractNode visitOneOperandValuableExpression(HTMLParser.OneOperandValuableExpressionContext ctx) {
-        return super.visitOneOperandValuableExpression(ctx);
+        System.out.println("One operand valuable");
+        boolean operandIsLeft = (ctx.children.get(0) == ctx.NG_ONE_VALUABLE_OPERAND());
+        String operator = ctx.NG_ONE_VALUABLE_OPERAND().getText();
+        Expression operand = (Expression) visit(ctx.expression());
+        return new OneOperandMathematicalNode(operandIsLeft,operator,operand);
     }
 
     @Override
@@ -183,18 +255,27 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     @Override
     public AbstractNode visitLiteralStringExpression(HTMLParser.LiteralStringExpressionContext ctx) {
         String fullText=ctx.NG_STRING().getText();
-        System.out.println(fullText);
         return new StringNode(fullText.substring(1,fullText.length()-1));
     }
 
     @Override
     public AbstractNode visitVariableConcatExpression(HTMLParser.VariableConcatExpressionContext ctx) {
-        return super.visitVariableConcatExpression(ctx);
+        Expression leftOperand = (Expression) visit(ctx.expression(0));
+        Expression rightOpernad = (Expression) visit(ctx.expression(1));
+        if (leftOperand instanceof Concatable && rightOpernad instanceof Valuable)
+            return new ConcatenationNode(leftOperand, rightOpernad);
+
+        throw new RuntimeException("Invalid Concat Expression");
     }
 
     @Override
     public AbstractNode visitConcatConditionExpression(HTMLParser.ConcatConditionExpressionContext ctx) {
-        return super.visitConcatConditionExpression(ctx);
+        System.out.println("in Condition Concatenation visitor");
+        Expression leftOperand = (Expression) visit(ctx.expression(0));
+        Expression rightOperand = (Expression) visit(ctx.expression(1));
+        String operator  = ctx.CONDITIONAL_CONCAT_OPERATOR().getText();
+
+        return new ConditionConcatenation(operator,leftOperand,rightOperand);
     }
 
     @Override
@@ -209,17 +290,20 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitNg_app(HTMLParser.Ng_appContext ctx) {
-        return super.visitNg_app(ctx);
+        return new NGAppAttribute(ctx.NG_ID().getText());
     }
 
     @Override
     public AbstractNode visitNg_for(HTMLParser.Ng_forContext ctx) {
-        return super.visitNg_for(ctx);
+        if (ctx.ngfor_body() != null)
+            return visitNgfor_body(ctx.ngfor_body());
+        throw new RuntimeException("Invalid loop body");
     }
 
     @Override
     public AbstractNode visitNg_switch(HTMLParser.Ng_switchContext ctx) {
-        return super.visitNg_switch(ctx);
+        Expression expression = (Expression) visit(ctx.switch_body());
+        return new NGSwitch(expression);
     }
 
     @Override
@@ -242,12 +326,13 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitNg_switch_case(HTMLParser.Ng_switch_caseContext ctx) {
-        return super.visitNg_switch_case(ctx);
+        Expression expression = (Expression) visit(ctx.switch_case_body());
+        return new NGSwitchCase(expression);
     }
 
     @Override
     public AbstractNode visitNg_switch_default(HTMLParser.Ng_switch_defaultContext ctx) {
-        return super.visitNg_switch_default(ctx);
+        return new NGSwitchDefault();
     }
 
     @Override
@@ -262,23 +347,38 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitNg_type(HTMLParser.Ng_typeContext ctx) {
-        return super.visitNg_type(ctx);
+        System.out.println("in ng_Type visitor");
+        return new NgTypeNode(ctx.INPUT_TYPE().getText());
     }
 
     @Override
     public AbstractNode visitNg_model(HTMLParser.Ng_modelContext ctx) {
-        return super.visitNg_model(ctx);
+        System.out.println("in ng_model visitor");
+
+        Expression model = (Expression) visit(ctx.expression());
+        NgModelNode ngModelNode = new NgModelNode(model);
+        if(ngModelNode.getModel()!=null){
+            return ngModelNode;
+        }
+        // this will give null pointer exception and didn't know what to replace with
+        return ngModelNode;
     }
 
     @Override
     public NGEventAttribute visitNg_event(HTMLParser.Ng_eventContext ctx) {
         Expression functionCall=(Expression)visit(ctx.expression());
-        return new NGEventAttribute(functionCall);
+        String eventName= ctx.NG_AT_EVENT().getText().substring(1);
+        return new NGEventAttribute(eventName,functionCall);
     }
 
     @Override
     public AbstractNode visitParams(HTMLParser.ParamsContext ctx) {
-        return super.visitParams(ctx);
+        System.out.println("in params visitor");
+        ArrayList<Expression> params = new ArrayList<>();
+        for(int i=0;i<ctx.getChildCount();i++){
+            params.add((Expression)visit(ctx.expression(i))) ;
+        }
+        return new FunctionCallNode(params);
     }
 
     @Override
@@ -309,12 +409,35 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitNgfor_body(HTMLParser.Ngfor_bodyContext ctx) {
-        return super.visitNgfor_body(ctx);
+        if (ctx.pair() == null) {
+            ForEachNode forNode;
+            String iterator = ctx.NG_ID(0).getText();
+            Expression list = (Expression) visit(ctx.expression(0));
+            if (list instanceof Iterable && (ctx.SEMI_COLON() == null && ctx.EQUAL_SIGN() == null))
+                return new ForEachNode(iterator, list);
+            if (ctx.SEMI_COLON() != null && ctx.EQUAL_SIGN() != null) {
+                String index = ctx.NG_ID(1).getText();
+                Expression indexValue = (Expression) visit(ctx.expression(1));
+                if (list instanceof Iterable && indexValue instanceof Valuable){
+                    forNode = new ForEachNode(iterator, list);
+                    forNode.setIndex(index);
+                    forNode.setIndexValue(indexValue);
+                    return forNode;
+                }
+            }
+            throw new RuntimeException("Invalid for body");
+        } else {
+            IteratorPairNode pair = (IteratorPairNode) visitPair(ctx.pair());
+            Expression map = (Expression) visit(ctx.expression(0));
+            if (map instanceof Iterable)
+                return new Map(pair, map);
+            throw new RuntimeException("Invalid map");
+        }
     }
 
     @Override
     public AbstractNode visitPair(HTMLParser.PairContext ctx) {
-        return super.visitPair(ctx);
+        return new IteratorPairNode(ctx.NG_ID(0).getText(), ctx.NG_ID(1).getText());
     }
 
 

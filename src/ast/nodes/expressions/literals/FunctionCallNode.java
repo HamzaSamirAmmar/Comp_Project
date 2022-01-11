@@ -10,10 +10,12 @@ public class FunctionCallNode extends Expression implements Iterable,Valuable, L
     Expression functionCall;
     ArrayList<Expression> parameters;
 
-
+    public FunctionCallNode(ArrayList<Expression> parameters) {
+        this.parameters = parameters;
+    }
     public FunctionCallNode(Expression functionCall, ArrayList<Expression> parameters) {
         if(!(functionCall instanceof FunctionCallable))
-            System.err.println("invalid function call!");
+            throw new RuntimeException("invalid function call!");
         this.functionCall = functionCall;
         this.parameters = parameters;
     }
@@ -23,6 +25,8 @@ public class FunctionCallNode extends Expression implements Iterable,Valuable, L
     }
 
     public void setFunctionCall(Expression functionCall) {
+        if(!(functionCall instanceof FunctionCallable))
+            throw new RuntimeException("invalid function call!");
         this.functionCall = functionCall;
     }
 
@@ -41,9 +45,10 @@ public class FunctionCallNode extends Expression implements Iterable,Valuable, L
 
     @Override
     protected Formatter nodeValue(Formatter formatter) {
-         formatter.object( functionCall.toString()) ;
-        for (Expression parameter: parameters)
-            formatter.object(parameter.toString());
+         formatter.object( functionCall.toString("functionName")) ;
+         formatter.array("parameters",new ArrayList<>(parameters));
+//        for (Expression parameter: parameters)
+//            formatter.object(parameter.toString());
         return formatter ;
     }
 }

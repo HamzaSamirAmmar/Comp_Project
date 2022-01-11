@@ -1,8 +1,10 @@
 package ast.nodes.expressions.Math;
 
-import ast.nodes.expressions.Expression;
-import ast.nodes.expressions.Valuable;
-import ast.nodes.expressions.ValuableNode;
+import ast.nodes.expressions.*;
+import ast.nodes.expressions.literals.DecimalNode;
+import ast.nodes.expressions.literals.FunctionCallNode;
+import ast.nodes.expressions.literals.StringNode;
+import ast.nodes.expressions.literals.VariableNode;
 import ast.nodes.util.Formatter;
 
 public class AdditiveNode extends Expression implements Valuable {
@@ -11,9 +13,15 @@ public class AdditiveNode extends Expression implements Valuable {
     String operator;
 
     public AdditiveNode(Expression leftOperand, Expression rightOperand, String operator) {
-        this.leftOperand = leftOperand;
-        this.rightOperand = rightOperand;
-        this.operator = operator;
+        if (leftOperand instanceof DecimalNode || leftOperand instanceof FunctionCallNode || leftOperand instanceof StringNode || leftOperand instanceof VariableNode || leftOperand instanceof ConcatenableNode || leftOperand instanceof PipeExpressionNode || leftOperand instanceof TernaryExpressionNode) {
+            if (rightOperand instanceof DecimalNode || rightOperand instanceof FunctionCallNode || rightOperand instanceof StringNode || rightOperand instanceof VariableNode || rightOperand instanceof ConcatenableNode || rightOperand instanceof PipeExpressionNode || rightOperand instanceof TernaryExpressionNode) {
+                this.leftOperand = leftOperand;
+                this.rightOperand = rightOperand;
+                this.operator = operator;
+            }
+        } else {
+            System.err.println("Invalid additive");
+        }
     }
 
     public Expression getLeftOperand() {
