@@ -7,20 +7,21 @@ import ast.nodes.expressions.literals.StringNode;
 import ast.nodes.expressions.literals.VariableNode;
 import ast.nodes.util.Formatter;
 
-public class MultiplicativeNode extends Expression implements Valuable {
+public class MultiplicativeNode extends Expression implements Valuable,Numeric {
     Expression leftOperand;//should be valuable
     Expression rightOperand;//should be valuable
     String operator;
 
     public MultiplicativeNode(Expression leftOperand, Expression rightOperand, String operator) {
-        if (leftOperand instanceof DecimalNode || leftOperand instanceof FunctionCallNode || leftOperand instanceof VariableNode || leftOperand instanceof ConcatenableNode || leftOperand instanceof PipeExpressionNode || leftOperand instanceof TernaryExpressionNode) {
-            if (rightOperand instanceof DecimalNode || rightOperand instanceof FunctionCallNode || rightOperand instanceof VariableNode || rightOperand instanceof ConcatenableNode || rightOperand instanceof PipeExpressionNode || rightOperand instanceof TernaryExpressionNode) {
+        if (leftOperand instanceof Numeric)
+        {
+            if (rightOperand instanceof Numeric) {
                 this.leftOperand = leftOperand;
                 this.rightOperand = rightOperand;
                 this.operator = operator;
             }
         } else {
-            System.err.println("Invalid multiplicative");
+            throw new RuntimeException("Invalid multiplicative");
         }
     }
 

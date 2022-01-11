@@ -126,9 +126,8 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
             return visit(ctx.ng_event());
         else if(ctx.ng_model()!=null)
             return visit(ctx.ng_model());
-        else if(ctx.ng_type()!=null)
+        else
             return visit(ctx.ng_type());
-        else return null;//TODO implement the rest
     }
 
     @Override
@@ -146,10 +145,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
             Expression conditionOperand = (Expression) visit(ctx.expression(0));
             Expression firstExpression = (Expression) visit(ctx.expression(1));
             Expression secondExpression = (Expression) visit(ctx.expression(2));
-            if (conditionOperand instanceof Logical &&
-                    firstExpression instanceof Valuable &&
-                    secondExpression instanceof Valuable
-            )
+            if (conditionOperand instanceof Logical )
                 return new TernaryExpressionNode(conditionOperand, firstExpression, secondExpression);
         }
         throw new RuntimeException("Invalid ternary expression");
@@ -188,7 +184,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
         if (ctx.SQUARE_OPEN() != null && ctx.SQUARE_CLOSE() != null) {
             Expression indexed = (Expression) visit(ctx.expression(0));
             Expression index = (Expression) visit(ctx.expression(1));
-            if (indexed instanceof Iterable && index instanceof Valuable)
+            if (indexed instanceof Iterable && index instanceof Numeric)
                 return new IndexedExpressionNode(indexed, index);
         }
         throw new RuntimeException("Invalid Indexed Variable Expression");
@@ -199,10 +195,11 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
         System.out.println("in pipe Expression visitor");
 
         Expression firstOperand = (Expression) visit(ctx.expression(0));
-        Expression functionName = (Expression) visit(ctx.expression(1));
+        Expression functionCall = (Expression) visit(ctx.expression(1));
         FunctionCallNode params = (FunctionCallNode)visit(ctx.params());
-
-        params.setFunctionCall(functionName);
+        if(!(functionCall instanceof FunctionCallable))
+            throw new RuntimeException("invalid function call!");
+        params.setFunctionCall(functionCall);
 
         return new PipeExpressionNode(firstOperand,params);
     }
@@ -260,10 +257,14 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitVariableConcatExpression(HTMLParser.VariableConcatExpressionContext ctx) {
+        //TODO left and right are numeric
         Expression leftOperand = (Expression) visit(ctx.expression(0));
-        Expression rightOpernad = (Expression) visit(ctx.expression(1));
-        if (leftOperand instanceof Concatable && rightOpernad instanceof Valuable)
-            return new ConcatenationNode(leftOperand, rightOpernad);
+        Expression rightOperand = (Expression) visit(ctx.expression(1));
+        if (leftOperand instanceof Concatable &&( (rightOperand instanceof FunctionCallNode)
+                                                 || (rightOperand instanceof VariableNode)
+                                                 || (rightOperand instanceof ConcatenationNode)
+                                                 || (rightOperand instanceof IndexedExpressionNode) ))
+            return new ConcatenationNode(leftOperand, rightOperand);
 
         throw new RuntimeException("Invalid Concat Expression");
     }
@@ -418,7 +419,8 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
             if (ctx.SEMI_COLON() != null && ctx.EQUAL_SIGN() != null) {
                 String index = ctx.NG_ID(1).getText();
                 Expression indexValue = (Expression) visit(ctx.expression(1));
-                if (list instanceof Iterable && indexValue instanceof Valuable){
+                if (list instanceof Iterable && indexValue instanceof Numeric)
+                {
                     forNode = new ForEachNode(iterator, list);
                     forNode.setIndex(index);
                     forNode.setIndexValue(indexValue);

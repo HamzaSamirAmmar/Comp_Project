@@ -6,7 +6,7 @@ import ast.nodes.util.Formatter;
 
 import java.util.ArrayList;
 
-public class FunctionCallNode extends Expression implements Iterable,Valuable, Logical, Concatable,FunctionCallable {
+public class FunctionCallNode extends Expression implements Iterable,Valuable,Numeric, Logical, Concatable {
     Expression functionCall;
     ArrayList<Expression> parameters;
 

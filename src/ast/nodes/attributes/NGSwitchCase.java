@@ -1,6 +1,7 @@
 package ast.nodes.attributes;
 
 import ast.nodes.expressions.Expression;
+import ast.nodes.expressions.Valuable;
 import ast.nodes.expressions.literals.ListNode;
 import ast.nodes.expressions.literals.MapNode;
 import ast.nodes.expressions.literals.MapPairNode;
@@ -11,7 +12,7 @@ public class NGSwitchCase extends NGAttribute {
     Expression expression;
 
     public NGSwitchCase(Expression expression) {
-        if (!(expression instanceof MapNode || expression instanceof MapPairNode || expression instanceof ListNode))
+        if (expression instanceof Valuable)
             this.expression = expression;
         else System.err.println("Switch case isn't valid");
     }

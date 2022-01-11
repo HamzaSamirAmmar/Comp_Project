@@ -2,6 +2,7 @@ package ast.nodes.attributes;
 
 import ast.nodes.expressions.ConcatenationNode;
 import ast.nodes.expressions.Expression;
+import ast.nodes.expressions.IndexedExpressionNode;
 import ast.nodes.expressions.literals.FunctionCallNode;
 import ast.nodes.expressions.literals.VariableNode;
 import ast.nodes.util.Formatter;
@@ -11,7 +12,7 @@ public class NgModelNode extends NGAttribute  {
 
     public NgModelNode(Expression model) {
         if(model.getClass() == VariableNode.class ||
-                model.getClass() == FunctionCallNode.class ||
+                model.getClass() == IndexedExpressionNode.class ||
                 model.getClass() == ConcatenationNode.class)
             this.model = model;
         else System.err.println("the model value can only be a variable name," +
@@ -24,7 +25,7 @@ public class NgModelNode extends NGAttribute  {
 
     public void setModel(Expression model) {
         if(model.getClass() == VariableNode.class ||
-                model.getClass() == FunctionCallNode.class ||
+                model.getClass() == IndexedExpressionNode.class ||
                 model.getClass() == ConcatenationNode.class)
             this.model = model;
         else System.err.println("the model value can only be a variable name," +

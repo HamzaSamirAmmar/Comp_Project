@@ -1,24 +1,22 @@
 package ast.nodes.expressions.Math;
 
-import ast.nodes.expressions.ConcatenableNode;
-import ast.nodes.expressions.Expression;
-import ast.nodes.expressions.Valuable;
-import ast.nodes.expressions.ValuableNode;
+import ast.nodes.expressions.*;
 import ast.nodes.expressions.literals.VariableNode;
 import ast.nodes.util.Formatter;
 
-public class OneOperandMathematicalNode extends Expression implements Valuable {
+public class OneOperandMathematicalNode extends Expression implements Valuable, Numeric {
     boolean operandIsLeft;
     String operator;
     Expression operand;//should be valuable
 
-    public OneOperandMathematicalNode(boolean operandIsLeft, String operator, Expression operand) {
-        if (operand instanceof VariableNode || operand instanceof ConcatenableNode) {
+    public OneOperandMathematicalNode(boolean operandIsLeft, String operator, Expression operand)
+    {
+        if (operand instanceof VariableNode || operand instanceof ConcatenableNode || operand instanceof IndexedExpressionNode) {
             this.operandIsLeft = operandIsLeft;
             this.operator = operator;
             this.operand = operand;
         } else {
-            System.err.println("Invalid one operand mathematical");
+            throw new RuntimeException("Invalid one operand mathematical");
         }
 
     }

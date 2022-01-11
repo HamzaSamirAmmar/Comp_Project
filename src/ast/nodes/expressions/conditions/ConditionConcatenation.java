@@ -16,10 +16,10 @@ public class ConditionConcatenation extends Condition {
         this.operator = operator;
         if(leftCondition instanceof Logical)
             this.leftCondition = leftCondition;
-        else System.err.println("the left condition should be logical expression ");
+        else  throw new RuntimeException("the left condition should be logical expression ");
         if(rightCondition instanceof Logical)
             this.rightCondition = rightCondition;
-        else System.err.println("the right condition should be logical expression ");
+        else  throw new RuntimeException("the right condition should be logical expression ");
     }
 
     public String getOperator() {
@@ -37,7 +37,7 @@ public class ConditionConcatenation extends Condition {
     public void setLeftCondition(Expression leftCondition) {
         if(leftCondition instanceof Logical)
             this.leftCondition = leftCondition;
-        else System.err.println("the left condition should be logical expression ");
+        else  throw new RuntimeException("the left condition should be logical expression ");
     }
 
     public Expression getRightCondition() {
@@ -47,7 +47,7 @@ public class ConditionConcatenation extends Condition {
     public void setRightCondition(Expression rightCondition) {
         if(rightCondition instanceof Logical)
             this.rightCondition = rightCondition;
-        else System.err.println("the right condition should be logical expression ");
+        else  throw new RuntimeException("the right condition should be logical expression ");
     }
 
     @Override
