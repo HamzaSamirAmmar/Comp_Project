@@ -474,19 +474,6 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
         return new IteratorPairNode(ctx.NG_ID(0).getText(), ctx.NG_ID(1).getText());
     }
 
-
-    @Override
-    public AbstractNode visitHtmlMisc(HTMLParser.HtmlMiscContext ctx) {
-        System.out.println("in HtmlMisc visitor");
-        return super.visitHtmlMisc(ctx);
-    }
-
-    @Override
-    public AbstractNode visitHtmlComment(HTMLParser.HtmlCommentContext ctx) {
-        System.out.println("in HtmlComment visitor");
-        return super.visitHtmlComment(ctx);
-    }
-
     @Override
     public AbstractNode visitScript(HTMLParser.ScriptContext ctx) {
         System.out.println("in script visitor");
