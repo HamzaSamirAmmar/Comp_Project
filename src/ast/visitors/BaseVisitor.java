@@ -22,13 +22,6 @@ import java.util.Stack;
 
 public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
-    protected static Stack<Boolean> switchExists;
-
-    public BaseVisitor() {
-        // initialize stack
-        if (switchExists == null)
-            switchExists = new Stack<>();
-    }
     @Override
     public HTMLDocument visitHtmlDocument(HTMLParser.HtmlDocumentContext ctx) {
         System.out.println("in doc visitor");
@@ -41,10 +34,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 //        document.setCol(ctx.htmlElements(0).getSymbol().getCharPositionInLine());
         return document;
     }
-    @Override
-    public AbstractNode visitScriptletOrSeaWs(HTMLParser.ScriptletOrSeaWsContext ctx) {
-        return super.visitScriptletOrSeaWs(ctx);
-    }
+
     @Override
     public AbstractNode visitHtmlElements(HTMLParser.HtmlElementsContext ctx) {
         System.out.println("in elements visitor");
@@ -65,7 +55,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
             if(ctx.getChild((ctx.getChildCount()-3)).equals(ctx.TAG_SLASH())){
                 tagCloseName = ctx.getChild(ctx.getChildCount()-2).getText();
                 if (!testName(tagOpenName, tagCloseName)){
-                    System.err.println("tag name does not match!");
+                    System.err.println("open tag name does not match close tag name!");
                     //throw new RuntimeException("name does not match!");
                 }
             }
@@ -100,8 +90,6 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
         return content;
 
     }
-
-
 
     @Override
     public AbstractNode visitHtmlChardata(HTMLParser.HtmlChardataContext ctx) {
@@ -150,15 +138,18 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitParenthesizedExpression(HTMLParser.ParenthesizedExpressionContext ctx) {
-        return super.visitParenthesizedExpression(ctx);
+        System.out.println("in Parenthesized Expression visitor");
+        return visit(ctx.expression());
     }
 
     @Override
     public AbstractNode visitLiteralArrayExpression(HTMLParser.LiteralArrayExpressionContext ctx) {
-        return super.visitLiteralArrayExpression(ctx);
+        System.out.println("in Literal Array Expression visitor");
+        return visit(ctx.ng_list());
     }
     @Override
     public AbstractNode visitTernaryExpression(HTMLParser.TernaryExpressionContext ctx) {
+        System.out.println("in ternary expression visitor");
         if (ctx.QUESTION_MARK() != null && ctx.COLON() != null) {
             Expression conditionOperand = (Expression) visit(ctx.expression(0));
             Expression firstExpression = (Expression) visit(ctx.expression(1));
@@ -199,6 +190,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitIndexedVariableExpression(HTMLParser.IndexedVariableExpressionContext ctx) {
+        System.out.println("in indexed variable expression visitor");
         if (ctx.SQUARE_OPEN() != null && ctx.SQUARE_CLOSE() != null) {
             Expression indexed = (Expression) visit(ctx.expression(0));
             Expression index = (Expression) visit(ctx.expression(1));
@@ -224,6 +216,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public BooleanNode visitLiteralBooleanExpression(HTMLParser.LiteralBooleanExpressionContext ctx) {
+        System.out.println("in literal boolean expression visitor");
         return new BooleanNode(Boolean.parseBoolean(ctx.NG_BOOLEAN().getText()));
     }
 
@@ -245,11 +238,13 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public DecimalNode visitLiteralNumericExpression(HTMLParser.LiteralNumericExpressionContext ctx) {
+        System.out.println("in literal numeric expression visitor");
         return new DecimalNode(Double.parseDouble(ctx.NG_DECIMAL().getText()));
     }
 
     @Override
     public AbstractNode visitFunctionCallExpression(HTMLParser.FunctionCallExpressionContext ctx) {
+        System.out.println("in function call expression visitor");
         Expression functionCall=(Expression)visit(ctx.expression());
         ArrayList<Expression> parameters=new ArrayList<>();
         if(ctx.params()!=null)
@@ -263,19 +258,21 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public MapNode visitLiteralObjectExpression(HTMLParser.LiteralObjectExpressionContext ctx) {
+        System.out.println("in literal object expression visitor");
         MapNode map=(MapNode) visit(ctx.map());
         return map;
     }
 
     @Override
     public AbstractNode visitLiteralStringExpression(HTMLParser.LiteralStringExpressionContext ctx) {
+        System.out.println("in literal string expression visitor");
         String fullText=ctx.NG_STRING().getText();
         return new StringNode(fullText.substring(1,fullText.length()-1));
     }
 
     @Override
     public AbstractNode visitVariableConcatExpression(HTMLParser.VariableConcatExpressionContext ctx) {
-        //TODO left and right are numeric
+        System.out.println("in variable concat expression visitor");
         Expression leftOperand = (Expression) visit(ctx.expression(0));
         Expression rightOperand = (Expression) visit(ctx.expression(1));
         if (leftOperand instanceof Concatable &&( (rightOperand instanceof FunctionCallNode)
@@ -299,21 +296,25 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public VariableNode visitVariableNameExpression(HTMLParser.VariableNameExpressionContext ctx) {
+        System.out.println("in variable name expression visitor");
         return new VariableNode(ctx.NG_ID().getText());
     }
 
     @Override
     public CharNode visitLiteralCharExpression(HTMLParser.LiteralCharExpressionContext ctx) {
+        System.out.println("in literal char expression visitor");
         return new CharNode(ctx.NG_CHAR().getText().charAt(1));
     }
 
     @Override
     public AbstractNode visitNg_app(HTMLParser.Ng_appContext ctx) {
+        System.out.println("in ng_app visitor");
         return new NGAppAttribute(ctx.NG_ID().getText());
     }
 
     @Override
     public AbstractNode visitNg_for(HTMLParser.Ng_forContext ctx) {
+        System.out.println("in ng_for visitor");
         if (ctx.ngfor_body() != null)
             return visitNgfor_body(ctx.ngfor_body());
         throw new RuntimeException("Invalid loop body");
@@ -321,47 +322,55 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitNg_switch(HTMLParser.Ng_switchContext ctx) {
+        System.out.println("in Ng_switch visitor");
         Expression expression = (Expression) visit(ctx.switch_body());
         return new NGSwitch(expression);
     }
 
     @Override
     public NGIfAttribute visitNg_if(HTMLParser.Ng_ifContext ctx) {
+        System.out.println("in Ng_if visitor");
         Expression condition=(Expression) visit(ctx.expression());
         return new NGIfAttribute(condition);
     }
 
     @Override
     public NGHideAttribute visitNg_hide(HTMLParser.Ng_hideContext ctx) {
+        System.out.println("in Ng_hide visitor");
         Expression condition=(Expression) visit(ctx.expression());
         return new NGHideAttribute(condition);
     }
 
     @Override
     public NGShowAttribute visitNg_show(HTMLParser.Ng_showContext ctx) {
+        System.out.println("in Ng_show visitor");
         Expression condition=(Expression) visit(ctx.expression());
         return new NGShowAttribute(condition);
     }
 
     @Override
     public AbstractNode visitNg_switch_case(HTMLParser.Ng_switch_caseContext ctx) {
+        System.out.println("in Ng_switch_case visitor");
         Expression expression = (Expression) visit(ctx.switch_case_body());
         return new NGSwitchCase(expression);
     }
 
     @Override
     public AbstractNode visitNg_switch_default(HTMLParser.Ng_switch_defaultContext ctx) {
+        System.out.println("in Ng_switch_default visitor");
         return new NGSwitchDefault();
     }
 
     @Override
     public AbstractNode visitSwitch_body(HTMLParser.Switch_bodyContext ctx) {
-        return super.visitSwitch_body(ctx);
+        System.out.println("in switch_body visitor");
+        return visit(ctx.expression());
     }
 
     @Override
     public AbstractNode visitSwitch_case_body(HTMLParser.Switch_case_bodyContext ctx) {
-        return super.visitSwitch_case_body(ctx);
+        System.out.println("in switch_case_body visitor");
+        return visit(ctx.expression());
     }
 
     @Override
@@ -373,7 +382,6 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
     @Override
     public AbstractNode visitNg_model(HTMLParser.Ng_modelContext ctx) {
         System.out.println("in ng_model visitor");
-
         Expression model = (Expression) visit(ctx.expression());
         NgModelNode ngModelNode = new NgModelNode(model);
         if(ngModelNode.getModel()!=null){
@@ -385,6 +393,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public NGEventAttribute visitNg_event(HTMLParser.Ng_eventContext ctx) {
+        System.out.println("in ng_event visitor");
         Expression functionCall=(Expression)visit(ctx.expression());
         String eventName= ctx.NG_AT_EVENT().getText().substring(1);
         return new NGEventAttribute(eventName,functionCall);
@@ -402,6 +411,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public ListNode visitNg_list(HTMLParser.Ng_listContext ctx) {
+        System.out.println("in ng_list visitor");
         ArrayList<Expression> elements=new ArrayList<>();
         for (int i = 0; i <ctx.expression().size() ; i++) {
             elements.add((Expression) visit(ctx.expression(i)));
@@ -411,6 +421,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public MapPairNode visitMap_value(HTMLParser.Map_valueContext ctx) {
+        System.out.println("in map_value visitor");
         MapPairNode keyValue= new MapPairNode();
         keyValue.setKey(ctx.NG_ID().getText());
         keyValue.setValue((Expression) visit(ctx.expression()));
@@ -419,6 +430,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public MapNode visitMap(HTMLParser.MapContext ctx) {
+        System.out.println("in map visitor");
         ArrayList<MapPairNode> pairNodes=new ArrayList<>();
         for (int i = 0; i <ctx.map_value().size() ; i++) {
             pairNodes.add((MapPairNode) visit(ctx.map_value(i)));
@@ -428,6 +440,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitNgfor_body(HTMLParser.Ngfor_bodyContext ctx) {
+        System.out.println("in ngfor_body visitor");
         if (ctx.pair() == null) {
             ForEachNode forNode;
             String iterator = ctx.NG_ID(0).getText();
@@ -457,22 +470,26 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitPair(HTMLParser.PairContext ctx) {
+        System.out.println("in pair visitor");
         return new IteratorPairNode(ctx.NG_ID(0).getText(), ctx.NG_ID(1).getText());
     }
 
 
     @Override
     public AbstractNode visitHtmlMisc(HTMLParser.HtmlMiscContext ctx) {
+        System.out.println("in HtmlMisc visitor");
         return super.visitHtmlMisc(ctx);
     }
 
     @Override
     public AbstractNode visitHtmlComment(HTMLParser.HtmlCommentContext ctx) {
+        System.out.println("in HtmlComment visitor");
         return super.visitHtmlComment(ctx);
     }
 
     @Override
     public AbstractNode visitScript(HTMLParser.ScriptContext ctx) {
+        System.out.println("in script visitor");
         if(ctx.SCRIPT_BODY()!=null) {
             String scriptWithEndTag=ctx.SCRIPT_BODY().getText();
             return new HTMLScript(scriptWithEndTag.substring(0,scriptWithEndTag.length()-9));
@@ -485,6 +502,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
 
     @Override
     public AbstractNode visitStyle(HTMLParser.StyleContext ctx) {
+        System.out.println("in style visitor");
         if(ctx.STYLE_BODY()!=null) {
             String styleWithEndTag=ctx.STYLE_BODY().getText();
             return new HTMLStyle(styleWithEndTag.substring(0,styleWithEndTag.length()-8 ));
@@ -494,7 +512,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
             return new HTMLStyle(styleWithEndTag.substring(0, styleWithEndTag.length() - 3));
         }
     }
-    protected boolean testName(String openTag, String closeTag) {
+    private boolean testName(String openTag, String closeTag) {
         return openTag.compareToIgnoreCase(closeTag) == 0;
     }
 }
