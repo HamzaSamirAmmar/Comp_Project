@@ -18,8 +18,17 @@ import generated.HTMLParser;
 import generated.HTMLParserBaseVisitor;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
+
+    protected static Stack<Boolean> switchExists;
+
+    public BaseVisitor() {
+        // initialize stack
+        if (switchExists == null)
+            switchExists = new Stack<>();
+    }
     @Override
     public HTMLDocument visitHtmlDocument(HTMLParser.HtmlDocumentContext ctx) {
         System.out.println("in doc visitor");
@@ -51,7 +60,16 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
             return visitScript(ctx.script());
         else {
             HTMLTag element=new HTMLTag();
-            element.setTagName(ctx.TAG_NAME(0).getText());
+            String tagOpenName = ctx.TAG_NAME(0).getText();
+            String tagCloseName;
+            if(ctx.getChild((ctx.getChildCount()-3)).equals(ctx.TAG_SLASH())){
+                tagCloseName = ctx.getChild(ctx.getChildCount()-2).getText();
+                if (!testName(tagOpenName, tagCloseName)){
+                    System.err.println("tag name does not match!");
+                    //throw new RuntimeException("name does not match!");
+                }
+            }
+            element.setTagName(tagOpenName);
             if(ctx.htmlContent()!=null){
                 element.setContent((HTMLContent) visit(ctx.htmlContent()));
             }
@@ -475,5 +493,8 @@ public class BaseVisitor extends HTMLParserBaseVisitor<AbstractNode> {
             String styleWithEndTag=ctx.STYLE_SHORT_BODY().getText();
             return new HTMLStyle(styleWithEndTag.substring(0, styleWithEndTag.length() - 3));
         }
+    }
+    protected boolean testName(String openTag, String closeTag) {
+        return openTag.compareToIgnoreCase(closeTag) == 0;
     }
 }
